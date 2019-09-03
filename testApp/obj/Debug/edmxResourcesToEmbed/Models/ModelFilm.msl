@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Хранилище FilmDBModelContainer" CdmEntityContainer="FilmDBEntities">
+    <EntitySetMapping Name="films">
+      <EntityTypeMapping TypeName="FilmDBModel.films">
+        <MappingFragment StoreEntitySet="films">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="FilmName" ColumnName="FilmName" />
+          <ScalarProperty Name="Desctiption" ColumnName="Desctiption" />
+          <ScalarProperty Name="Director" ColumnName="Director" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="Year" ColumnName="Year" />
+          <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

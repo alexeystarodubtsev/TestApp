@@ -1,0 +1,18 @@
+﻿@model PagedList.IPagedList<testApp.Models.films>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@foreach (var item in Model)
+{
+    <div class="col-md-2" style="margin-top:10px">
+        <a href='@Url.Action("Details", "Films",  new { id = item.Id })'>
+            <img src=@Url.Content(item.ImageUrl) width="95%" />
+        </a>
+    </div>
+
+
+}
+    <div class="col-md-12" style="text-align:center;">@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))</div>
