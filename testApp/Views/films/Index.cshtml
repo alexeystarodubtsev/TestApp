@@ -15,4 +15,7 @@
 
 
 }
-    <div class="col-md-12" style="text-align:center;">@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))</div>
+    <div class="col-md-12" style="text-align:center;">@Html.PagedListPager(
+                       Model,
+                       page => Url.Action("Index", new { page })
+    )</div>
