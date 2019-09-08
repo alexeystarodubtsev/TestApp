@@ -42,7 +42,14 @@ namespace testApp.Controllers
         // GET: films/Create
         public ActionResult Create()
         {
-            return View();
+            if (!Request.IsAuthenticated)
+            {
+                return HttpNotFound();
+            }
+            films film = new films();
+            
+            return View(film);
+
         }
 
 
@@ -65,20 +72,33 @@ namespace testApp.Controllers
                 Image.SaveAs(Server.MapPath("~/Images/" + fileName));
                 film.ImageUrl = "~/Images/" + fileName;
             }
-            if (ModelState.IsValid)
+            if (db.films.Any(o=> o.Director == film.Director && o.FilmName == film.FilmName && o.Year == film.Year))
             {
-
-                db.films.Add(film);
-                db.SaveChanges();
-
-                return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, "Такой фильм уже есть");
+                return View(film);
             }
+            try
+            {
+                if (ModelState.IsValid)
+                {
 
+                    db.films.Add(film);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Не все поля заполнены");
+            }
             return View(film);
         }
+        
 
-        // GET: films/Edit/5
-        public ActionResult Edit(int? id)
+
+            // GET: films/Edit/5
+            public ActionResult Edit(int? id)
         {
             
             if (id == null)
@@ -99,13 +119,30 @@ namespace testApp.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FilmName,Desctiption,Director,Creator,Year,ImageUrl")] films film)
-        {   
-            if (ModelState.IsValid)
+        public ActionResult Edit([Bind(Include = "Id,FilmName,Desctiption,Director,Creator,Year,ImageUrl")] films film, HttpPostedFileBase Image)
+        {
+            if (Image != null)
             {
-                db.Entry(film).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                string fileName = System.IO.Path.GetFileName(Image.FileName);
+                fileName = String.Format(@"{0}", System.Guid.NewGuid()) + Path.GetExtension(Image.FileName);
+                 // сохраняем файл в папку Files в проекте
+                Image.SaveAs(Server.MapPath("~/Images/" + fileName));
+                film.ImageUrl = "~/Images/" + fileName;
+            }
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    db.Entry(film).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Не все поля заполнены");
             }
             return View(film);
         }

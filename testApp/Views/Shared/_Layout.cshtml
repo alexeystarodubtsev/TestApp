@@ -22,11 +22,12 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Список фильмов", "Index", "films")</li>
-                 @if (Request.IsAuthenticated)
-                  {
-                    <li>@Html.ActionLink("Создать фильм", "Create", "films")</li>
-                  }
-                    <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Создать фильм", "Create", "films")</li>
+                    }
+
+                    
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

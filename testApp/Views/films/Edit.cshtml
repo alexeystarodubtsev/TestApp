@@ -4,73 +4,92 @@
     ViewBag.Title = "Edit";
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "Films", FormMethod.Post, new { enctype = "multipart/form-data"}))
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+<div class="form-horizontal">
+    <hr />
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.FilmName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FilmName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FilmName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Desctiption, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Desctiption, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Desctiption, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Director, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Director, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Director, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Creator, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Creator, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Creator, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Year, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Year, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-2"></div>
-        <div class="form-group col-md-10">
-            <img src=@Url.Content(Model.ImageUrl) width="100" />
-        </div>
-        <div class="form-group">
-            <label class="control-label col-md-2" for="ImageUrl">Выберите постер</label>
-            <input type="file" name="Image" accept="image/png, image/jpeg" />
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default"  />
-            </div>
+    <div class="form-group">
+        <label class="control-label col-md-2" for="FilmName">Название</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FilmName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Введите название", } })
+            @Html.ValidationMessageFor(model => model.FilmName, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="Desctiption">Описание</label>
+        <div class="col-md-10">
+            @Html.TextAreaFor(m => m.Desctiption, new{
+                                                       style = "Height:120px",
+                                                       @class = "form-control",
+                                                       @placeholder = "Введите описание",
+                                                       @maxlength = "400"
+                                                   })
+            @Html.ValidationMessageFor(model => model.Desctiption, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="Director">Режиссер</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Director, new { htmlAttributes = new { @class = "form-control", @placeholder = "Введите ФИО режиссера", } })
+            @Html.ValidationMessageFor(model => model.Director, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @Html.HiddenFor(model => model.Creator)
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="Year">Год</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "Введите год фильма", } })
+            @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2" for="ImageUrl" style="margin-top:10px">Постер</label>
+        <div class="col-md-2">
+            @Html.HiddenFor(model => model.ImageUrl)
+            <img id="poster" src="@Url.Content(Model.ImageUrl)" class = "col-md-12" style = "display:normal" />
+
+            <label class="btn btn-default btn-file" style="margin-top:10px">
+                Загрузить <input type="file" name="Image" style="display:none" accept="image/jpeg, image/png" onchange="getImage(this)">
+            </label>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Сохранить" class="btn btn-default" />
+        </div>
+    </div>
+</div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+<script>
+    function getImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#poster')
+                    .attr('src', e.target.result)
+                    .addClass("col-md-12")
+                    .attr('style', "display:normal");
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+</script>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
