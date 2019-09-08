@@ -55,8 +55,7 @@ namespace testApp.Controllers
 
 
         // POST: films/Create
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FilmName,Desctiption,Director,Creator,Year,ImageUrl")] films film, HttpPostedFileBase Image)
@@ -115,8 +114,7 @@ namespace testApp.Controllers
         }
 
         // POST: films/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FilmName,Desctiption,Director,Creator,Year,ImageUrl")] films film, HttpPostedFileBase Image)
@@ -155,7 +153,7 @@ namespace testApp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             films film = db.films.Find(id);
-            if (film == null)
+            if (film == null || System.Web.HttpContext.Current.User.Identity.Name != film.Creator)
             {
                 return HttpNotFound();
             }
