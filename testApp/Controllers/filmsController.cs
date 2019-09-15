@@ -106,6 +106,8 @@ namespace testApp.Controllers
             }
             films film = db.films.Find(id);
 
+            //знаю, что лучше было бы сравнивать по id и хранить его, но начал проект делать без ASP.Identity, потом только заметил
+            //но пользователь когда регистрируется - указывает тоже уникальный e-mail, который является и Name 
             if (film == null || System.Web.HttpContext.Current.User.Identity.Name != film.Creator)
             {
                 return HttpNotFound();
