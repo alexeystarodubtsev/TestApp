@@ -16,11 +16,10 @@ namespace testApp.Controllers
         private FilmDBEntities db = new FilmDBEntities();
 
         // GET: films
-        public ActionResult Index(int? page)
+        public ActionResult Index(int page = 1)
         {
-            int pageSize = 18;
-            int pageNumber = (page ?? 1);
-            return View(db.films.ToList().ToPagedList(pageNumber, pageSize));
+            const int pageSize = 18;
+            return View(db.films.OrderBy(c => c.Id).ToPagedList(page, pageSize));
             
         }
 
@@ -44,7 +43,7 @@ namespace testApp.Controllers
         {
             if (!Request.IsAuthenticated)
             {
-                return HttpNotFound();
+                return new HttpStatusCodeResult(403);
             }
             films film = new films();
             
@@ -64,8 +63,7 @@ namespace testApp.Controllers
             {
                 // получаем имя файла
                 film.Creator = System.Web.HttpContext.Current.User.Identity.Name;
-                string fileName = System.IO.Path.GetFileName(Image.FileName);
-                fileName = String.Format(@"{0}", System.Guid.NewGuid()) + Path.GetExtension(Image.FileName);
+                string fileName = String.Format(@"{0}", System.Guid.NewGuid()) + Path.GetExtension(Image.FileName);
 
                 // сохраняем файл в папку Files в проекте
                 Image.SaveAs(Server.MapPath("~/Images/" + fileName));
@@ -87,7 +85,7 @@ namespace testApp.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch
+            catch (System.Data.Entity.Validation.DbEntityValidationException)
             {
                 ModelState.AddModelError(string.Empty, "Не все поля заполнены");
             }
@@ -110,7 +108,8 @@ namespace testApp.Controllers
             //но пользователь когда регистрируется - указывает тоже уникальный e-mail, который является и Name 
             if (film == null || System.Web.HttpContext.Current.User.Identity.Name != film.Creator)
             {
-                return HttpNotFound();
+                //return HttpNotFound();
+                return new HttpStatusCodeResult(403);
             }
             return View(film);
         }
@@ -155,9 +154,13 @@ namespace testApp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             films film = db.films.Find(id);
-            if (film == null || System.Web.HttpContext.Current.User.Identity.Name != film.Creator)
+            if (film == null )
             {
                 return HttpNotFound();
+            }
+            if( System.Web.HttpContext.Current.User.Identity.Name != film.Creator)
+            {
+                return new HttpStatusCodeResult(403);
             }
             return View(film);
         }
